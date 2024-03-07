@@ -1,5 +1,8 @@
 package com.artcorb.cards.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.artcorb.cards.config.EnvironmentConfig;
 import com.artcorb.cards.controller.base.BaseController;
 import com.artcorb.cards.dto.CardDto;
 import com.artcorb.cards.dto.ResponseDto;
@@ -25,16 +29,21 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
 
 @Tag(name = "CRUD REST API for Cards", description = "CREATE, READ, UPDATE and DELETE cards")
 @RestController
 @Validated
-@AllArgsConstructor
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class CardController extends BaseController {
 
+  @Autowired
   private ICardService iCardService;
+  @Autowired
+  private EnvironmentConfig environmentConfig;
+  @Autowired
+  private Environment environment;
+  @Value("${build.version}")
+  private String buildVersion;
 
   @Operation(summary = "Create Card REST API", description = "REST API to create new card")
   @ApiResponses({@ApiResponse(responseCode = STATUS_200, description = MESSAGE_201),
@@ -90,5 +99,34 @@ public class CardController extends BaseController {
       return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
           .body(new ResponseDto(STATUS_417, MESSAGE_417_DELETE));
     }
+  }
+
+  @Operation(summary = "Get build information",
+      description = "Get build information that is deployed into accounts microservice")
+  @ApiResponses({@ApiResponse(responseCode = STATUS_200, description = MESSAGE_200),
+      @ApiResponse(responseCode = STATUS_500, description = MESSAGE_500,
+          content = @Content(schema = @Schema(implementation = ResponseErrorDto.class)))})
+  @GetMapping("/build-info")
+  public ResponseEntity<String> getBuildInfo() {
+    return ResponseEntity.status(HttpStatus.OK).body(buildVersion);
+  }
+
+  @Operation(summary = "Get Java version", description = "Get Java version of enviroment")
+  @ApiResponses({@ApiResponse(responseCode = STATUS_200, description = MESSAGE_200),
+      @ApiResponse(responseCode = STATUS_500, description = MESSAGE_500,
+          content = @Content(schema = @Schema(implementation = ResponseErrorDto.class)))})
+  @GetMapping("/java-version")
+  public ResponseEntity<String> getJavaVersion() {
+    return ResponseEntity.status(HttpStatus.OK).body(environment.getProperty("JAVA_HOME"));
+  }
+
+  @Operation(summary = "Get Contact Info",
+      description = "Contact Info details that can be reached out in case of any issues")
+  @ApiResponses({@ApiResponse(responseCode = STATUS_200, description = MESSAGE_200),
+      @ApiResponse(responseCode = STATUS_500, description = MESSAGE_500,
+          content = @Content(schema = @Schema(implementation = ResponseErrorDto.class)))})
+  @GetMapping("/contact-info")
+  public ResponseEntity<EnvironmentConfig> getContactInfo() {
+    return ResponseEntity.status(HttpStatus.OK).body(environmentConfig);
   }
 }
