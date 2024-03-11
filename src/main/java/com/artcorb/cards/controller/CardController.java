@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.artcorb.cards.config.EnvironmentConfig;
+import com.artcorb.cards.cfg.CardsEnvironments;
 import com.artcorb.cards.controller.base.BaseController;
 import com.artcorb.cards.dto.CardDto;
 import com.artcorb.cards.dto.ResponseDto;
@@ -39,7 +39,7 @@ public class CardController extends BaseController {
   @Autowired
   private ICardService iCardService;
   @Autowired
-  private EnvironmentConfig environmentConfig;
+  private CardsEnvironments environmentConfig;
   @Autowired
   private Environment environment;
   @Value("${build.version}")
@@ -126,7 +126,7 @@ public class CardController extends BaseController {
       @ApiResponse(responseCode = STATUS_500, description = MESSAGE_500,
           content = @Content(schema = @Schema(implementation = ResponseErrorDto.class)))})
   @GetMapping("/contact-info")
-  public ResponseEntity<EnvironmentConfig> getContactInfo() {
+  public ResponseEntity<CardsEnvironments> getContactInfo() {
     return ResponseEntity.status(HttpStatus.OK).body(environmentConfig);
   }
 }

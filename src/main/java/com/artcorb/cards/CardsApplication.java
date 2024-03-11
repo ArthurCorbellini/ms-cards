@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import com.artcorb.cards.config.EnvironmentConfig;
+import com.artcorb.cards.cfg.CardsEnvironments;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -29,7 +29,7 @@ import io.swagger.v3.oas.annotations.info.License;
 		url = "https://www.genericUrlPlaceholder.com/swagger-ui.html"))
 // @formatter:on
 @EnableJpaAuditing(auditorAwareRef = "auditAwareImpl")
-@EnableConfigurationProperties(value = {EnvironmentConfig.class})
+@EnableConfigurationProperties(value = {CardsEnvironments.class})
 @SpringBootApplication
 public class CardsApplication {
 
