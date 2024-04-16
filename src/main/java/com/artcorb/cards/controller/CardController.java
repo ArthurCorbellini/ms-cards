@@ -1,5 +1,7 @@
 package com.artcorb.cards.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +24,7 @@ import com.artcorb.cards.dto.CardDto;
 import com.artcorb.cards.dto.ResponseDto;
 import com.artcorb.cards.dto.ResponseErrorDto;
 import com.artcorb.cards.service.ICardService;
+import com.artcorb.cards.util.FilterUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,6 +39,8 @@ import jakarta.validation.constraints.Pattern;
 @Validated
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class CardController extends BaseController {
+
+  private static final Logger logger = LoggerFactory.getLogger(CardController.class);
 
   @Autowired
   private ICardService iCardService;
@@ -62,8 +68,11 @@ public class CardController extends BaseController {
       @ApiResponse(responseCode = STATUS_500, description = MESSAGE_500,
           content = @Content(schema = @Schema(implementation = ResponseErrorDto.class)))})
   @GetMapping("/fetch")
-  public ResponseEntity<CardDto> fetchCardDetails(@RequestParam @Pattern(regexp = "(^$|[0-9]{10})",
-      message = "Mobile number must be 10 digits") String mobileNumber) {
+  public ResponseEntity<CardDto> fetchCardDetails(
+      @RequestHeader(FilterUtil.CORRELATION_ID) String correlationId,
+      @RequestParam @Pattern(regexp = "(^$|[0-9]{10})",
+          message = "Mobile number must be 10 digits") String mobileNumber) {
+    logger.debug(FilterUtil.CORRELATION_ID + " found: {} ", correlationId);
     CardDto cardDto = iCardService.fetchCard(mobileNumber);
     return ResponseEntity.status(HttpStatus.OK).body(cardDto);
   }

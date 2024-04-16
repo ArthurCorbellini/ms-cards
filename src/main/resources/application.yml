@@ -53,3 +53,9 @@ info: # eureka server dashboard info
     name: "cards"
     description: "Spring Boot Demo Bank - Microservice - Cards"
     version: "1.0.0"
+
+logging:
+  level:
+    com:
+      artcorb:
+        cards: DEBUG
