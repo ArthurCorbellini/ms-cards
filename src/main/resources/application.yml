@@ -28,9 +28,17 @@ management:
     web:
       exposure:
         include: "*"
+  health: # libera os endpoints para readness e liveness que serão usados para verificar se microsserviço está operante (...8071/actuator/health)
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
   endpoint: # for deregister from eureka server when the microservice shutdown
     shutdown:
       enabled: true
+    health:
+      probes:
+        enabled: true
   info: # info related actuator url
     env:
       enabled: true
