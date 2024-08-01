@@ -42,6 +42,9 @@ management:
   info: # info related actuator url
     env:
       enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
 endpoints: # for deregister from eureka server when the microservice shutdown
   shutdown:
