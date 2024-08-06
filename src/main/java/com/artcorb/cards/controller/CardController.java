@@ -72,9 +72,10 @@ public class CardController extends BaseController {
       @RequestHeader(FilterUtil.CORRELATION_ID) String correlationId,
       @RequestParam @Pattern(regexp = "(^$|[0-9]{10})",
           message = "Mobile number must be 10 digits") String mobileNumber) {
-    logger.debug(FilterUtil.CORRELATION_ID + " found: {} ", correlationId);
-    CardDto cardDto = iCardService.fetchCard(mobileNumber);
-    return ResponseEntity.status(HttpStatus.OK).body(cardDto);
+    logger.debug("fetchCardDetails method start");
+    CardDto dto = iCardService.fetchCard(mobileNumber);
+    logger.debug("fetchCardDetails method end");
+    return ResponseEntity.status(HttpStatus.OK).body(dto);
   }
 
   @Operation(summary = "Update Card REST API",
